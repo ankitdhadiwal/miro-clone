@@ -22,16 +22,18 @@ This is a clone of the popular online collaborative whiteboarding platform, Miro
   - Node.js
   - Express.js (optional)
   - Firebase (for real-time updates, optional)
+  - Convex and Clerk 
 
 - **Database**: 
   - Firebase Firestore (if using Firebase for storing data)
+  - Convex and Clerk 
 
 - **Authentication**: 
   - Firebase Authentication (if included)
   - JWT (if using custom authentication)
 
 - **Deployment**:
-  - Deployed using [Vercel](https://vercel.com) or [Netlify](https://netlify.com) (if hosted)
+  - Deployed using [Vercel](https://vercel.com) or [Netlify](https://netlify.com)
 
 ## Setup and Installation
 
