@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
+import { ModalProvider } from "@/providers/modal-provider";
 
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ConvexClientProvider>
+          <ModalProvider />
           <Toaster />
         {children}
         </ConvexClientProvider>
