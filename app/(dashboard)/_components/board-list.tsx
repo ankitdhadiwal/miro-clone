@@ -21,7 +21,10 @@ export const BoardList = ({
     orgId,
     query,
 }: BoardListProps) => {
-    const data = useQuery(api.boards.get, {orgId});
+    const data = useQuery(api.boards.get, {
+        orgId, 
+        ...query
+    });
 
     if (data === undefined) {
         return (
@@ -29,6 +32,7 @@ export const BoardList = ({
               <h2 className="text-3xl">
               {query.favourites ? "Favourite Boards" : "Team Boards"}
               </h2>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5
                 2xl:grid-cols-6 gap-5 mt-8 pb-10">
                     <NewBoardButton orgId={orgId} disabled />
@@ -77,7 +81,7 @@ export const BoardList = ({
                     authorName= {board.authorName}
                     createdAt={board._creationTime}
                     orgId= {board.orgId}
-                    isFavourite = {false}
+                    isFavourite = {board.isFavourite}
                     />
                 ))}
             </div>

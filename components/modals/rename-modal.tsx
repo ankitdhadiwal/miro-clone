@@ -21,9 +21,20 @@ export const RenameModal = () => {
         setTitle(initialValues.title);
     }, [initialValues.title]);
 
-    const onSubmit = () => {
-        
-    }
+    const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+        e.preventDefault();
+
+        mutate({
+            id: initialValues.id,
+            title,
+        })
+          .then(() => {
+            toast.success("Board renamed. ");
+            onClose();
+          })
+           .catch(() => toast.error("Failed to rename board."));
+    };
+    
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
