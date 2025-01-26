@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { ClientSideSuspense, LiveblocksProvider, RoomProvider } from "@liveblocks/react/suspense";
+import { Loading } from "@/app/board/[boardId]/_components/loading";
 
 
 interface RoomProps {
@@ -14,9 +15,9 @@ export const Room = ({
     roomId
 }:RoomProps) => {
     return (
-        <LiveblocksProvider publicApiKey={"pk_dev_ACQxDytrdBcKe3mIYmcUfcTFPk_cZdWKDnysnSVg7BB5dPSZ1Hp1hxOepJWncN6x"}>
+        <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
         <RoomProvider id={roomId} initialPresence={{}}>
-            <ClientSideSuspense fallback={<div>Loading....</div>}>
+            <ClientSideSuspense fallback={<Loading />}>
                 {() => children}
             </ClientSideSuspense>
         </RoomProvider>

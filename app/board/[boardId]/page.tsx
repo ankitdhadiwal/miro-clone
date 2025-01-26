@@ -12,6 +12,7 @@ const BoardIdPage = ({
     params
 }: BoardIdPageProps) => {
     return (
+        
         <Room roomId={params.boardId}>
             <Canvas boardId = {params.boardId} />
         </Room>
