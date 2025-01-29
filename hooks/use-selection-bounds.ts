@@ -2,7 +2,7 @@ import { shallow } from "@liveblocks/react";
 
 import type { Layer, XYWH} from "@/types/canvas";
 import { useStorage, useSelf } from "@liveblocks/react";
-import { X } from "lucide-react";
+
 
 const boundingBox = (layers: Layer[]): XYWH | null => {
     const first = layers[0];
@@ -17,10 +17,18 @@ const boundingBox = (layers: Layer[]): XYWH | null => {
     for(let i = 1; i < layers.length; i++) {
         const {x,y, width, height} = layers[i];
 
-        if (left > x) left=x;
-        if (right < x + width) right = x + width;
-        if (top > y) top=y;
-        if (bottom < y + height) bottom = y + height;
+        if (left > x){
+            left=x;
+        }
+        if (right < x + width) {
+            right = x + width;
+        } 
+        if (top > y){
+            top=y;
+        }
+        if (bottom < y + height) {
+            bottom = y + height;
+        }
     }
 
     return {
@@ -37,6 +45,6 @@ export const useSelectionBounds = () => {
     return useStorage((root) => {
         const selectedLayers = selection?.map((layerId) => root.layers.get(layerId)!).filter(Boolean);
 
-        //return boundingBox(selectedLayers);
+        return boundingBox(selectedLayers ?? []);
     }, shallow);
 };

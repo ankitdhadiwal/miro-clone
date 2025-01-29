@@ -3,6 +3,7 @@
 import { Side, XYWH, LayerType} from "@/types/canvas";
 import { memo } from "react";
 import { useSelf, useStorage } from "@liveblocks/react";
+import { useSelectionBounds } from "@/hooks/use-selection-bounds";
 
 interface SelectionBoxProps {
     onResizeHandlePointerDown: (corner: Side, initialBounds: XYWH) => void;
@@ -19,15 +20,161 @@ export const SelectionBox = memo(({
 
     const isShowingHandles = useStorage((root) => 
         soleLayerId && root.layers.get(soleLayerId)?.type !== LayerType.Path
-    )
+    );
+
+    const bounds = useSelectionBounds();
+
+    if(!bounds) {
+        return null;
+    }
 
 
     return (
-        <div>
+        <>
+          <rect 
+            className="fill-transparent stroke-blue-500 stroke-1 pointer-events-none"
+            style={{
+                transform: `transparent(${bounds.x}px, ${bounds.y}px)`,
+            }}
+            x={0}
+            y={0}
+            width={bounds.width}
+            height={bounds.height}
+          />
+          {isShowingHandles && (
+            <>
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "nwse-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2}px, 
+                    ${bounds.y - HANDLE_WIDTH / 2}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
 
-        </div>
-    )
-
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "ns-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x + bounds.width / 2 - HANDLE_WIDTH / 2}px, 
+                      ${bounds.y - HANDLE_WIDTH / 2}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "nesw-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px,
+                     ${bounds.y - HANDLE_WIDTH / 2}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "ew-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px, 
+                    ${bounds.y + bounds.height / 2 - HANDLE_WIDTH / 2}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "nwse-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2 + bounds.width}px,
+                     ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "ns-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x + bounds.width / 2 - HANDLE_WIDTH / 2}px,
+                    ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "nesw-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2}px,
+                     ${bounds.y - HANDLE_WIDTH / 2 + bounds.height}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+               <rect 
+                 className="fill-white stroke-1 stroke-blue-500"
+                 x={0}
+                 y={0}
+                 style={{
+                    cursor: "ew-resize",
+                    width: `${HANDLE_WIDTH}px`,
+                    height: `${HANDLE_WIDTH}px`,
+                    transform: `translate(${bounds.x - HANDLE_WIDTH / 2}px, 
+                     ${bounds.y - HANDLE_WIDTH / 2 + bounds.height / 2}px)`
+                 }}
+                 onPointerDown={(e) => {
+                    e.stopPropagation();
+                    
+                 }}
+               />
+            </>
+          )}
+        </>
+    );
 });
 
 SelectionBox.displayName = "SelectionBox";

@@ -192,7 +192,7 @@ export const Canvas = ({
                     />
                   ))}
                   <SelectionBox
-                     onResizeHanlePointerDown={() => {}}
+                     onResizeHandlePointerDown={() => {}}
                    />
                     <CursorsPresence />
                 </g>
