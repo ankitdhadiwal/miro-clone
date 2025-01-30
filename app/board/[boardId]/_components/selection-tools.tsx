@@ -9,6 +9,7 @@ import { useDeleteLayers } from "@/hooks/use-delete-layers";
 import { Hint } from "@/components/hint";
 import { BringToFront, SendToBack, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LayerPreview } from "./layer-preview";
 
 
 
@@ -68,17 +69,18 @@ export const SelectionTools = memo(({
     const setFill = useMutation((
         { storage },
         fill: Color,
-    ) => {
-        if (!selection) return;
-
+    ) => {  
         const liveLayers = storage.get("layers");
         setLastUsedColor(fill);
 
-        selection.forEach((id) => {
-            console.log(`Updating layer ${id} with color`, (fill)); //debugging
+        selection?.forEach((id) => {
+            console.log("before", liveLayers.get(id));
             liveLayers.get(id)?.set("fill", fill);
-        })
+            console.log("after", liveLayers.get(id));
+        });
     }, [selection, setLastUsedColor]);
+
+    
 
     const deleteLayers = useDeleteLayers();
 
@@ -95,7 +97,7 @@ export const SelectionTools = memo(({
 
     return (
         <div
-         className="absoulte p-3 rounded-md bg-white shadow-sm border flex select-none w-fit "
+         className="absoulte p-3 rounded-xl bg-white shadow-sm border flex select-none w-fit "
          style={{
             transform: `translate(
                calc(${x}px - 50%),

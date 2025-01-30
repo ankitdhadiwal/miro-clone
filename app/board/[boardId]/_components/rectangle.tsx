@@ -1,5 +1,6 @@
 import {RectangleLayer} from "@/types/canvas";
 import { colorToCss } from "@/lib/utils";
+import { useStorage } from "@liveblocks/react";
 
 interface RectangleProps  {
     id: string;
@@ -10,25 +11,30 @@ interface RectangleProps  {
 
 export const Rectangle = ({
     id,
-    layer,
     onPointerDown,
     selectionColor,
 }: RectangleProps) => {
-    const {x, y, width, height, fill } = layer;
+    const layer = useStorage((root) => root.layers.get(id));
+
+    if(!layer) {
+        return null;
+    };
+
+    console.log(`Rendering Rectangle ${id} with Fill:`, layer.fill);
 
     return (
         <rect
           className="drop-shadow-md"
           onPointerDown={(e) => onPointerDown(e,id)}
           style={{
-            transform: `translate(${x}px, ${y}px)`,
+            transform: `translate(${layer.x}px, ${layer.y}px)`,
           }}
           x={0}
           y={0}
-          width={width}
-          height={height}
+          width={layer.width}
+          height={layer.height}
           strokeWidth={1}
-          fill={fill ? colorToCss(layer.fill): "#000"}
+          fill={layer.fill ? colorToCss(layer.fill): "#000"}
           stroke={selectionColor || "transparent"}
          />
     )
