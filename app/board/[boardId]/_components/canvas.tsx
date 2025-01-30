@@ -13,6 +13,7 @@ import { pointerEventToCanvasPoint, connectionIdToColor, resizeBounds } from "@/
 import { LiveObject } from "@liveblocks/client";
 import {LayerPreview} from "./layer-preview";
 import {SelectionBox} from "./selection-box";
+import { SelectionTools } from "./selection-tools";
 
 
 const MAX_LAYERS = 100;
@@ -70,6 +71,45 @@ export const Canvas = ({
     }, [lastUsedColor]);
 
 
+    const translateSelectedLayers = useMutation((
+        {storage, self},
+        point: Point,
+    ) => {
+        if(canvasState.mode !== CanvasMode.Translating) {
+            return;
+        }
+
+        const offset = {
+            x: point.x - canvasState.current.x,
+            y: point.y - canvasState.current.y,
+        };
+
+        const liveLayers = storage.get("layers");
+
+        for(const id of self.presence.selection) {
+            const layer = liveLayers.get(id);
+
+            if(layer) {
+                layer.update({
+                    x: layer.get("x") + offset.x,
+                    y: layer.get("y") + offset.y,
+                });
+            }
+        }
+        setCanvasState({mode: CanvasMode.Translating, current: point });
+    }, [
+        canvasState,
+    ]);
+    
+
+    const unselectLayers = useMutation((
+        {self, setMyPresence}
+    ) => {
+        if (self.presence.selection.length > 0) {
+            setMyPresence({selection: []}, {addToHistory: true});
+        }
+    }, []);
+
 
     const resizeSelectedLayer = useMutation((
         {storage, self},
@@ -95,7 +135,6 @@ export const Canvas = ({
     }, [canvasState]);
 
 
-
     const onResizeHandlePointerDown = useCallback((
         corner: Side,
         initialBounds: XYWH,    
@@ -108,7 +147,6 @@ export const Canvas = ({
         });
     }, [history]);
 
-     
 
     const onWheel = useCallback((e: React.WheelEvent) => {
         setCamera((camera) => ({
@@ -117,13 +155,17 @@ export const Canvas = ({
         }));
     },[]);
 
+
+
     const onPointerMove = useMutation(({ setMyPresence }, 
         e: React.PointerEvent) => {
             e.preventDefault();
 
             const current = pointerEventToCanvasPoint(e, camera);
 
-            if (canvasState.mode === CanvasMode.Resizing) {
+            if(canvasState.mode === CanvasMode.Translating) {
+                translateSelectedLayers(current);
+            }else if (canvasState.mode === CanvasMode.Resizing) {
                 resizeSelectedLayer(current);
             }
 
@@ -132,27 +174,50 @@ export const Canvas = ({
             camera,
             canvasState,
             resizeSelectedLayer,
+            translateSelectedLayers,
         ]);
 
 
-
-        const onPointerLeave = useMutation((
+    const onPointerLeave = useMutation((
             { setMyPresence }
         ) => {
             setMyPresence({ cursor: null });
         }, []);
 
 
+    const onPointerDown = useCallback((
+            e: React.PointerEvent,
+        ) => {
+            const point = pointerEventToCanvasPoint(e,camera);
 
-        const onPointerUp = useMutation((
+            if(canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Pressing) {
+                setCanvasState({
+                    mode: CanvasMode.None,
+                })
+            } else if (canvasState.mode === CanvasMode.Inserting) {
+                insertLayer(canvasState.layerType, point);
+            } else {
+                setCanvasState({
+                    mode: CanvasMode.None,  
+                });
+            }
+
+            setCanvasState({origin: point, mode: CanvasMode.Pressing });
+        },[camera, canvasState.mode, setCanvasState]);
+
+
+     const onPointerUp = useMutation((
             {},
             e
         ) => {
             const point = pointerEventToCanvasPoint(e, camera);
 
-            
-
-            if(canvasState.mode === CanvasMode.Inserting) {
+            if(canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Pressing) {
+                unselectLayers();
+                setCanvasState({
+                    mode: CanvasMode.None,
+                });
+            } else if (canvasState.mode === CanvasMode.Inserting) {
                 insertLayer(canvasState.layerType, point);
             } else {
                 setCanvasState ({
@@ -167,7 +232,9 @@ export const Canvas = ({
             canvasState,
             history,
             insertLayer,
+            unselectLayers,
         ]);
+
 
         const selections = useOthersMapped ((other) => other.presence.selection);
 
@@ -199,6 +266,8 @@ export const Canvas = ({
             canvasState.mode,
         ]);
 
+
+
         const layerIdsToColorSelection = useMemo(() => {
             const layerIdsToColorSelection: Record<string, string> = {};
 
@@ -226,12 +295,17 @@ export const Canvas = ({
                undo={history.undo}
                redo={history.redo}
             />
+            <SelectionTools
+                camera={camera}
+                setLastUsedColor={setLastUsedColor}
+             />
             <svg
               className="h-[100vh] w-[100vw]"
               onWheel={onWheel}
               onPointerMove={onPointerMove}
               onPointerLeave = {onPointerLeave}
               onPointerUp={onPointerUp}
+              onPointerDown = {onPointerDown}
             >
                 <g style={{
                     transform: `translate(${camera.x}px, ${camera.y}px)`
