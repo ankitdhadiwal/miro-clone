@@ -4,7 +4,7 @@ import {nanoid} from "nanoid";
 import React, {useState, useCallback, useMemo} from "react";
 
 import {Camera, CanvasMode, CanvasState, Color, LayerType, Point, Side, XYWH} from "@/types/canvas";
-import { useHistory, useCanUndo, useCanRedo, useMutation, useStorage, useOthersMapped} from "@liveblocks/react";
+import { useHistory, useCanUndo, useCanRedo, useMutation, useStorage, useOthersMapped, useSelf} from "@liveblocks/react";
 import { CursorsPresence } from "./cursors-presence";
 import {Info} from "./info";
 import {Participants} from "./participants";
@@ -15,6 +15,8 @@ import {LayerPreview} from "./layer-preview";
 import {SelectionBox} from "./selection-box";
 import { SelectionTools } from "./selection-tools";
 import { penPointsToPathLayer } from "@/lib/utils";
+import { Path } from "./path";
+import { colorToCss } from "@/lib/utils";
 
 
 const MAX_LAYERS = 100;
@@ -27,7 +29,7 @@ export const Canvas = ({
 }: CanvasProps) => {
     const layerIds = useStorage((root) => root.layerIds);
 
-
+    const pencilDraft = useSelf((me) => me.presence.pencilDraft);
     const [canvasState, setCanvasState] = useState<CanvasState>({
         mode: CanvasMode.None,
     });
@@ -198,8 +200,12 @@ export const Canvas = ({
             )),
         );
 
-        
-    },[]);
+        const liveLayerIds = storage.get("layerIds");
+        liveLayerIds.push(id);
+
+        setMyPresence({ pencilDraft: null });
+        setCanvasState({ mode: CanvasMode.Pencil });
+    },[lastUsedColor]);
 
     const startDrawing = useMutation((
         { setMyPresence },
@@ -448,6 +454,14 @@ export const Canvas = ({
                       />
                    )}
                     <CursorsPresence />
+                    {pencilDraft != null && pencilDraft.length > 0 && (
+                        <Path 
+                           points={pencilDraft}
+                           fill={colorToCss(lastUsedColor)}
+                           x={0}
+                           y={0}
+                        />
+                    )}
                 </g>
             </svg>
         </main>
