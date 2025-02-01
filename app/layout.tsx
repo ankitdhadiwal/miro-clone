@@ -4,18 +4,19 @@ import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
 import { ModalProvider } from "@/providers/modal-provider";
-
+import { Loading } from "@/components/auth/loading";
 import { ConvexClientProvider } from "@/providers/convex-client-provider";
+import { Suspense } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,11 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Suspense fallback={<Loading />}>
         <ConvexClientProvider>
           <ModalProvider />
           <Toaster />
-        {children}
+           {children}
         </ConvexClientProvider>
+        </Suspense>
       </body>
     </html>
   );

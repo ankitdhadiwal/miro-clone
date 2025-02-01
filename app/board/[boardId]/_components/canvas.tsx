@@ -1,7 +1,7 @@
 "use client";
 
 import {nanoid} from "nanoid";
-import React, {useState, useCallback, useMemo} from "react";
+import React, {useState, useCallback, useMemo, useEffect} from "react";
 
 import {Camera, CanvasMode, CanvasState, Color, LayerType, Point, Side, XYWH} from "@/types/canvas";
 import { useHistory, useCanUndo, useCanRedo, useMutation, useStorage, useOthersMapped, useSelf} from "@liveblocks/react";
@@ -17,6 +17,8 @@ import { SelectionTools } from "./selection-tools";
 import { penPointsToPathLayer } from "@/lib/utils";
 import { Path } from "./path";
 import { colorToCss } from "@/lib/utils";
+import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
+import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
 
 const MAX_LAYERS = 100;
@@ -41,6 +43,7 @@ export const Canvas = ({
         b: 0,
     });
 
+    useDisableScrollBounce();
     const history = useHistory();
     const canUndo = useCanUndo();
     const canRedo = useCanRedo();
@@ -403,6 +406,34 @@ export const Canvas = ({
 
             return layerIdsToColorSelection;
         }, [selections]);
+
+        const deleteLayers = useDeleteLayers();
+
+        useEffect(( ) => {
+            function onKeyDown(e: KeyboardEvent) {
+                switch (e.key) {
+                    case "Backspace":
+                        deleteLayers();
+                        break;
+                    case "z": {
+                        if(e.ctrlKey || e.metaKey) {
+                            if(e.shiftKey) {
+                                history.redo();
+                            } else {
+                                history.undo();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            document.addEventListener("keydown", onKeyDown)
+
+            return () => {
+                document.removeEventListener("keydown", onKeyDown)
+            }
+        }, [deleteLayers, history]);
 
 
     return (

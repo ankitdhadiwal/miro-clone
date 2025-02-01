@@ -1,5 +1,5 @@
 import {Hint} from "@/components/hint";
-import { Avatar, AvatarFallback, AvatarImage, AvatarProps} from "@radix-ui/react-avatar";
+import { Avatar, AvatarFallback, AvatarImage} from "@radix-ui/react-avatar";
 
 interface UserAvatarProps {
     src?: string;

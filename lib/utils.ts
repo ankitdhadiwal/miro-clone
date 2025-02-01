@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import {Camera, Color, Point, Side , XYWH, Layer, PathLayer, LayerType} from "@/types/canvas";
-import { X } from "lucide-react";
 
 const COLORS = [
   "#DC2626",

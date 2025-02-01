@@ -2,7 +2,7 @@
 
 import {Color} from "@/types/canvas";
 import { colorToCss } from "@/lib/utils";
-import { LayerPreview } from "./layer-preview";
+
 
 interface ColorPickerProps {
     onChange: (color: Color) => void;

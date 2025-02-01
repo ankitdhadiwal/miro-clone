@@ -9,7 +9,6 @@ import { useDeleteLayers } from "@/hooks/use-delete-layers";
 import { Hint } from "@/components/hint";
 import { BringToFront, SendToBack, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LayerPreview } from "./layer-preview";
 
 
 
@@ -30,7 +29,7 @@ export const SelectionTools = memo(({
          const liveLayerIds = storage.get("layerIds");
          const indices: number[] = [];
 
-         const arr = liveLayerIds.toArray();
+         const arr = liveLayerIds.toImmutable();
 
          for (let i=0; i < arr.length; i++) {
             if(selection!.includes(arr[i])) {
@@ -53,7 +52,7 @@ export const SelectionTools = memo(({
          const liveLayerIds = storage.get("layerIds");
          const indices: number[] = [];
 
-         const arr = liveLayerIds.toArray();
+         const arr = liveLayerIds.toImmutable();
 
          for (let i=0; i < arr.length; i++) {
             if(selection!.includes(arr[i])) {

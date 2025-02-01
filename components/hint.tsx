@@ -4,7 +4,6 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ShieldMinus } from "lucide-react";
 import React from "react";
 
 export type HintProps = {
