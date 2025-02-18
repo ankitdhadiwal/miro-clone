@@ -38,6 +38,10 @@ export const EmptyBoards = () => {
                width={110}
                alt="Empty"
             />
+        {/* console.log("Image source:", imageSrc); */}
+        console.log(&quot;Image source:&quot;, imageSrc);
+
+
 
             <h2 className="text-2xl font-semibold mt-6">
                 Create your first board!
