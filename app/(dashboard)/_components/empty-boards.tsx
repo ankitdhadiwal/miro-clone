@@ -38,7 +38,6 @@ export const EmptyBoards = () => {
                width={110}
                alt="Empty"
             />
-        {/* console.log("Image source:", imageSrc); */}
         console.log(&quot;Image source:&quot;, imageSrc);
 
 
