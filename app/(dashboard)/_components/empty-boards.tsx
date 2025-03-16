@@ -6,7 +6,7 @@ import {toast} from "sonner"
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {useApiMutation} from "@/hooks/use-api-mutation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 
